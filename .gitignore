@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pdf
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Configuration and Secrets
+.env
+.idea/
+.vscode/
+
+# Local databases (ChromaDB local persistence)
+chroma_data/
+*.db
+
+
+node_modules/
+.next/

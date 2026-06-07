@@ -1,0 +1,43 @@
+# --- Security & Credentials ---
+# Prevents sensitive tokens from leaking into the Docker image layers
+.env
+.env.*
+*.env
+
+# --- Runtime Artifacts & Uploads ---
+# Prevents local test contracts from bloating the image
+*.pdf
+
+# --- Local Virtual Environments ---
+# Prevents architecture mismatch issues (e.g., native C-extensions built on Windows/Mac copying to a Linux container)
+venv/
+.venv/
+env/
+
+# --- Frontend Ecosystem Boundary ---
+# Enforces separation of concerns; backend image should not contain React/Node modules
+frontend/
+node_modules/
+.next/
+
+# --- Local Databases & RAG Vector Storage ---
+# Ensures the container starts with a clean slate or uses explicit Docker volumes, avoiding SQLite locks and state corruption
+chroma_data/
+omniscribe_history.db
+omniscribe_history.db-shm
+omniscribe_history.db-wal
+
+# --- Python Caches & Build Artifacts ---
+# Drastically reduces image size and prevents unexpected caching behaviors
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.history/
+
+# --- IDE & OS Metadata ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

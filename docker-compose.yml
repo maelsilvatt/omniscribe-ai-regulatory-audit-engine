@@ -1,0 +1,43 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: omniscribe_backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Ensures Python output is logged immediately in Docker without buffering delays
+      - PYTHONUNBUFFERED=1
+      # Local LLM resolution configurations
+      - OLLAMA_URL=http://host.docker.internal:11434/api/version
+      - OLLAMA_HOST=http://host.docker.internal:11434
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    volumes:
+      - .:/app
+      # Anonymous volume: Prevents the host's frontend directory from being mounted into the backend container, avoiding unnecessary file tracking
+      - /app/frontend
+    extra_hosts:
+      # Maps host.docker.internal to the host IP, ensuring local Ollama connections work natively across Linux, Mac, and Windows
+      - "host.docker.internal:host-gateway"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: omniscribe_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      # Forces Webpack/Next.js to use polling for Hot Module Replacement (HMR). Crucial for file watcher stability across Docker volume mounts.
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./frontend:/app
+      # Anonymous volumes: Isolates container-specific installations and builds from the host machine to prevent architecture mismatch (e.g., native Node binaries)
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
