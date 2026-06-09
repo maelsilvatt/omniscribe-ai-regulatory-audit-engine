@@ -1,8 +1,37 @@
 # OmniScribe AI — Autonomous Regulatory Due Diligence & Audit Platform
 
-OmniScribe AI is an enterprise-grade, autonomous multi-agent platform designed to automate complex corporate compliance, legal due diligence, and regulatory auditing workflows. By merging high-performance asynchronous retrieval architectures with state-machine-controlled multi-agent orchestration, OmniScribe AI ingests raw corporate documentation, validates it against volatile regulatory frameworks, and yields deterministic, schema-enforced risk assessment reports.
+![Architecture](https://img.shields.io/badge/Architecture-Event--Driven_Multi--Agent-blue?style=for-the-badge)
+![Inference](https://img.shields.io/badge/Inference-Local_LLM_(Llama_3.1)-orange?style=for-the-badge)
+![Vector_DB](https://img.shields.io/badge/Vector_DB-ChromaDB-purple?style=for-the-badge)
+![Frontend](https://img.shields.io/badge/Frontend-React_%7C_Next.js-emerald?style=for-the-badge)
 
-The system features a modular architecture built from the ground up to unify low-latency semantic document grounding with bounded agentic workflows, ensuring safety, determinism, data privacy via local inference, and extreme traceability.
+OmniScribe AI is an autonomous multi-agent platform engineered to automate complex corporate compliance, legal due diligence, and regulatory auditing workflows. By merging high-performance asynchronous retrieval architectures with state-machine-controlled multi-agent orchestration, OmniScribe AI ingests raw corporate documentation, validates it against volatile regulatory frameworks, and yields deterministic, schema-enforced risk assessment reports.
+
+Built from the ground up to unify low-latency semantic document grounding with bounded agentic workflows, the system forcus on safety, output determinism, and absolute data privacy via local network inference.
+
+---
+
+## 🖥️ System Interface & Compliance Workflows
+
+The OmniScribe AI React frontend provides a streamlined, enterprise-grade workspace for legal and compliance teams to manage legal documents, configure policy weights, and review deterministic audit reports.
+
+### 1. Compliance Workspace & Document Repository
+The centralized main hub allows auditors to track global contract ingestion history, review pre-indexed regulatory frameworks (LGPD, ISOs, BACEN), and monitor system-wide compliance health scores.
+
+<p align="center">
+  <img src="./images/omniscribe-audit-main-page.png" width="850" alt="OmniScribe AI Main Workspace">
+</p>
+
+### 2. Multi-Agent Analysis & Risk Synthesis
+When initiating a new compliance scan, the platform enables granular, execution-time configuration. Auditors can drag-and-drop complex multi-page PDF contracts, select specific target regulations, and scale the strictness thresholds.
+Once ingested, the document flows into a secondary evaluation state. The `Omniscribe Multi-agent AI` engine coordinates context retrieval from ChromaDB, displays semantic mismatch logs, and streams context-aware risk synthesis into the dashboard.
+
+<p align="center">
+  <img src="./images/omniscribe-audit-dashboard-1.png" width="850" alt="Audit Parameters Configuration">
+</p>
+<p align="center">
+  <img src="./images/omniscribe-audit-dashboard-2.png" width="850" alt="Multi-Agent Analysis View">
+</p>
 
 ---
 
@@ -60,16 +89,45 @@ graph TB
     style Schema fill:#faf5ff,stroke:#553c9a,stroke-width:2px
 
 ```
+### Multi-Agent Workflow
 
----
+The system relies on a specialized multi-agent pipeline orchestrated by a LangGraph state machine. Each agent has a strictly bounded context and deterministic role:
+
+```mermaid
+graph TD
+    Orchestrator[LangGraph Orchestrator]
+    
+    subgraph Autonomous Agent Pipeline
+        direction TB
+        Ingestion[1. Ingestion Agent]
+        Search[2. Semantic Search Agent]
+        Auditor[3. Auditor Agent]
+        Governance[4. Governance Agent]
+    end
+    
+    Orchestrator -->|Triggers Pipeline| Ingestion
+    Ingestion -->|Extracts & Chunks Text| Search
+    Search -->|Retrieves Legal Context| Auditor
+    Auditor -->|Synthesizes Risk| Governance
+    Governance -->|Validates JSON Schema| Orchestrator
+    
+    classDef agent fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#000;
+    classDef orch fill:#f0fff4,stroke:#2f855a,stroke-width:2px,color:#000;
+    class Ingestion,Search,Auditor,Governance agent;
+    class Orchestrator orch;
+```
+* **Ingestion Agent:** Responsible for parsing raw multi-page PDF contracts, and chunking the text into semantic blocks optimized for the LLM's context window.
+* **Semantic Search Agent:** Acts as the RAG engineer. It takes the contract chunks, formulates optimized queries, and searches the ChromaDB vector store (powered by Google Gemini embeddings) to fetch the exact regulatory clauses needed for the audit.
+* **Auditor Agent:** The core analytical brain (powered by local Llama 3.1). It cross-references the ingested contract clauses against the retrieved legal context to identify vulnerabilities, non-compliance issues, and liability risks.
+* **Governance Agent:** It evaluates the Auditor's raw text output and forces it into a strict Pydantic schema, ensuring the frontend receives perfectly formatted, deterministic JSON objects without hallucinations.
 
 ## ✨ Key Features
 
-* **Data Privacy First (Local Inference)**: Auditing agents run on local LLMs (Ollama + Llama 3.1), ensuring highly sensitive corporate contracts never leave the internal network during the critical analysis phase.
-* **Agentic RAG Flow**: Embedded autonomous query optimization and recursive retrieval. The *Search Agent* localizes comprehensive regulatory backing data using Google Gemini's advanced text-embedding models.
-* **State-Machine Multi-Agent Coordination**: Eliminates chain-of-thought hallucination and non-deterministic agent loops by enforcing rigorous DAG (Directed Acyclic Graph) state boundaries via LangGraph, persisted securely in the cloud via Turso DB.
-* **Real-Time Asynchronous Streaming**: Utilizing FastAPI and Python's native `asyncio`, the platform streams active agent steps, inner thoughts, and incremental auditing logs straight to the React frontend over WebSockets.
-* **Strict Structural Enforcement**: Eliminates text-parsing post-processing vulnerabilities. Leveraging native structured outputs mapping directly into complex `Pydantic` schemas, the final audit delivery is guaranteed to align with expected frontend JSON structures.
+* **Data Privacy First (Local Inference):** Auditing agents run on local LLMs (Ollama + Llama 3.1), ensuring highly sensitive corporate contracts never leave the internal network during the critical analysis phase.
+* **Agentic RAG Flow:** Embedded autonomous query optimization and recursive retrieval. The *Search Agent* localizes comprehensive regulatory backing data using Google Gemini's advanced text-embedding models.
+* **State-Machine Multi-Agent Coordination:** Eliminates chain-of-thought hallucination and non-deterministic agent loops by enforcing rigorous DAG (Directed Acyclic Graph) state boundaries via LangGraph, persisted securely in the cloud via Turso DB.
+* **Real-Time Asynchronous Streaming:** Utilizing FastAPI and Python's native `asyncio`, the platform streams active agent steps, inner thoughts, and incremental auditing logs straight to the React frontend over WebSockets.
+* **Strict Structural Enforcement:** Eliminates text-parsing post-processing vulnerabilities. By leveraging structured outputs mapped directly into complex `Pydantic` schemas, the final audit delivery is mathematically guaranteed to align with the frontend JSON structures.
 
 ---
 
@@ -119,7 +177,7 @@ omniscribe-ai/
 | **Embeddings** | Google Gemini (`text-embedding-004`) | Multilingual semantic vector representation |
 | **Vector Database** | ChromaDB | Semantic document storage and context retrieval |
 | **State DB** | Turso (libSQL) | Distributed, low-latency checkpointing and audit history |
-| **Validation** | Pydantic v2 | Deterministic schema enforcement and typing |
+| **Validation** | Pydantic v2 | Deterministic schema enforcement and strict typing |
 
 ---
 
@@ -139,7 +197,7 @@ Create a `.env` file in the root directory:
 | Variable | Description | Example |
 | --- | --- | --- |
 | `GEMINI_API_KEY` | Google API key for embedding generation | `AIzaSy...` |
-| `TURSO_DATABASE_URL` | Remote libSQL database connection string | `libsql://your-db.turso.io` |
+| `TURSO_DATABASE_URL` | Local libSQL database connection string | `libsql://your-db.turso.io` |
 | `TURSO_AUTH_TOKEN` | Authentication token for Turso DB | `ey...` |
 | `OLLAMA_BASE_URL` | Endpoint for the local Ollama instance | `http://host.docker.internal:11434` |
 | `VECTOR_COLLECTION_NAME` | ChromaDB internal collection name | `omniscribe_vault` |
@@ -150,20 +208,19 @@ The easiest way to run the entire OmniScribe AI ecosystem is via Docker Compose,
 
 1. Clone the repository and configure your `.env` file.
 2. Start the local Ollama service and pull the required model:
+
 ```bash
 ollama serve
 ollama pull llama3.1
 
 ```
 
-
 3. Boot the application cluster:
+
 ```bash
 docker-compose up --build
 
 ```
-
-
 
 * **Frontend Dashboard**: `http://localhost:3000`
 * **Backend API Docs**: `http://localhost:8000/docs`
@@ -176,9 +233,9 @@ docker-compose up --build
 
 Submit corporate documents for execution against specific regulatory guidelines via a `multipart/form-data` request.
 
-**Endpoint**: `POST /api/v1/audit/initiate`
+**Endpoint:** `POST /api/v1/audit/initiate`
 
-**cURL Example**:
+**cURL Example:**
 
 ```bash
 curl -X POST "http://localhost:8000/api/v1/audit/initiate" \
@@ -189,7 +246,7 @@ curl -X POST "http://localhost:8000/api/v1/audit/initiate" \
 
 ```
 
-**JSON Response**:
+**JSON Response:**
 
 ```json
 {
@@ -217,6 +274,18 @@ Connecting to the provided WebSocket URL emits standard JSON event packets detai
 
 ---
 
-## 📜 License
+## 📚 References & Documentation
 
-This project is licensed under the MIT License — see the `LICENSE` file for details.
+For more detailed information regarding the core technologies and engines used in this project, please refer to their official documentation:
+
+* **[LangGraph / LangChain](https://www.google.com/search?q=https://python.langchain.com/v0.1/docs/langgraph/)** - State machine orchestration for multi-agent workflows.
+* **[Ollama](https://ollama.com/)** - Local LLM execution and inference.
+* **[ChromaDB](https://www.trychroma.com/)** - Open-source embedding database.
+* **[Turso](https://turso.tech/)** - Edge-hosted SQLite database (libSQL).
+* **[FastAPI](https://fastapi.tiangolo.com/)** - High-performance Python web framework.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License — see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
